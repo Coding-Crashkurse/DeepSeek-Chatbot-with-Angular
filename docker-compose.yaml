@@ -1,6 +1,18 @@
 version: "3.8"
 
 services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_server
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11435
+      - GIN_MODE=release
+      - OLLAMA_KEEP_ALIVE=-1
+    ports:
+      - "11435:11435"
+    volumes:
+      - ollama_models:/root/.ollama/models
+
   db:
     image: postgres:15
     container_name: langgraph_db
@@ -16,12 +28,14 @@ services:
   backend:
     build: ./fastapi-backend
     container_name: langgraph_backend
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
     ports:
       - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - OLLAMA_URL=http://ollama:11435
     depends_on:
       - db
+      - ollama
 
   frontend:
     build: ./angular-frontend
@@ -33,3 +47,4 @@ services:
 
 volumes:
   db_data:
+  ollama_models:

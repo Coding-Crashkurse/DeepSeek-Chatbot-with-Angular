@@ -1,28 +1,47 @@
-<div style="position: fixed; bottom: 20px; right: 20px;">
-  <!-- Chat-Bubble -->
-  <div style="width: 60px; height: 60px; border-radius: 30px; background-color: #007bff;
-           display: flex; align-items: center; justify-content: center; color: #fff;
-           cursor: pointer;" (click)="toggleChat()">
-    Chat
+<div class="page-wrapper">
+  <div class="header">
+    <h1>Welcome to our AI Demo Chat!</h1>
+    <p>
+      Click on the blue Chat button to begin a conversation.
+      This is a short demonstration of our AI-powered assistant.
+    </p>
   </div>
 
-  <!-- Chat-Fenster -->
-  <div *ngIf="chatOpen"
-    style="background-color: #f7f7f7; border: 1px solid #ccc; width: 300px; height: 400px; margin-top: 10px; display: flex; flex-direction: column;">
-    <div style="flex: 1; padding: 10px; overflow-y: auto;">
-      <div *ngFor="let message of messages">
-        <strong>{{ message.role }}:</strong> {{ message.content }}
+  <!-- Chat container in bottom-right corner -->
+  <div class="chat-container">
+    <!-- Chat bubble -->
+    <div class="chat-bubble" (click)="toggleChat()">
+      Chat
+    </div>
+
+    <!-- Chat window (only shown when chatOpen = true) -->
+    <div class="chat-window" *ngIf="chatOpen">
+      <div class="chat-messages">
+        <div *ngFor="let msg of messages" [ngClass]="msg.role">
+          <!-- Add a nested element with .chat-message for the bubble -->
+          <div class="chat-message">
+            <strong>{{ msg.role }}: </strong>{{ msg.content }}
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Ladeindikator -->
-    <div style="padding: 0 10px 10px;">
-      <span *ngIf="loading" style="font-style: italic; color: gray;">Warte auf Antwort...</span>
-    </div>
 
-    <div style="padding: 10px; border-top: 1px solid #ccc;">
-      <input [(ngModel)]="userInput" (keyup.enter)="sendMessage()" style="width: 80%;" placeholder="Schreib etwas..." />
-      <button (click)="sendMessage()">Senden</button>
+      <!-- Loading spinner -->
+      <div class="chat-loading">
+        <mat-progress-spinner *ngIf="loading" mode="indeterminate" diameter="24"></mat-progress-spinner>
+      </div>
+
+      <!-- Input area -->
+      <div class="chat-input">
+        <mat-form-field appearance="fill" style="flex: 1;">
+          <mat-label>Message</mat-label>
+          <input matInput [(ngModel)]="userInput" (keyup.enter)="sendMessage()" placeholder="Type something..." />
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="sendMessage()" [disabled]="loading">
+          Send
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -3,6 +3,12 @@ import { NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from './chat.service';
 
+// Material-Module
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 interface Message {
   role: string;
   content: string;
@@ -11,7 +17,16 @@ interface Message {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NgIf, NgFor, FormsModule],
+  // Hier binden wir alle benötigten Imports ein:
+  imports: [
+    NgIf,
+    NgFor,
+    FormsModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -20,8 +35,6 @@ export class AppComponent {
   userInput = '';
   messages: Message[] = [];
   sessionId: string | null = null;
-
-  // Neue Variable für Ladezustand
   loading = false;
 
   constructor(private chatService: ChatService) {}
@@ -47,10 +60,7 @@ export class AppComponent {
     if (!input || !this.sessionId) {
       return;
     }
-
-    // Zeigen: Wir sind noch nicht fertig
     this.loading = true;
-
     this.messages.push({ role: 'user', content: input });
 
     this.chatService.sendMessage(this.sessionId, input).subscribe({
@@ -65,7 +75,6 @@ export class AppComponent {
         console.error('Chat-Fehler:', err);
       },
     });
-
     this.userInput = '';
   }
 }

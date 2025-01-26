@@ -14,8 +14,6 @@ export class ChatService {
   }
 
   sendMessage(threadId: string, userMsg: string) {
-    // Das Backend erwartet ein JSON mit { thread_id, message }
-    // und liefert ein Objekt { answer: string } zurück
     return this.http.post<{ answer: string }>(`${this.baseURL}/chat`, {
       thread_id: threadId,
       message: userMsg,

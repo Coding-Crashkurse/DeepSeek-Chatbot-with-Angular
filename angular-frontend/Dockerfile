@@ -1,4 +1,4 @@
-# 1) Node-Umgebung zum Bauen
+# 1) Build Stage
 FROM node:18 AS build
 
 WORKDIR /app
@@ -6,9 +6,14 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 COPY . .
-# In neueren Angular-Versionen kann das Build-Skript "build" oder "build --configuration production" heißen
-RUN npm run build --prod
+RUN npm run build
 
-# 2) NGINX zum Ausliefern
+# 2) Production Stage (Nginx)
 FROM nginx:alpine
-COPY --from=build /app/dist/angular-frontend /usr/share/nginx/html
+COPY --from=build /app/dist/angular-frontend/browser /usr/share/nginx/html
+
+
+# Expose port 80 inside container
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

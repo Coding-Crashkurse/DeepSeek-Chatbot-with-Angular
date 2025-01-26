@@ -1,7 +1,6 @@
 import os
 import uuid
 from contextlib import asynccontextmanager
-from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,17 +9,33 @@ from psycopg_pool import AsyncConnectionPool
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import START, StateGraph, MessagesState
 from langchain_core.messages import HumanMessage
-from langchain_openai import ChatOpenAI
-from dotenv import load_dotenv
+from langchain_ollama import ChatOllama
+import re
 
-load_dotenv()
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434")
 
-model = ChatOpenAI(model="gpt-4o-mini")
+REMOVE_TOKENS = os.getenv("REMOVE_TOKENS", "True").lower() == "true"
+
+THINK_PATTERN = re.compile(r"<think>.*?</think>", re.DOTALL)
+
+
+def remove_think_tokens(text: str) -> str:
+    """Remove <think>...</think> tokens from the text."""
+    return re.sub(THINK_PATTERN, "", text)
+
+
+model = ChatOllama(
+    model="deepseek-r1:7b", temperature=0, base_url=OLLAMA_URL, keep_alive="-1"
+)
 
 
 def call_model(state: MessagesState):
-    messages = state["messages"]
-    response = model.invoke(messages)
+    response = model.invoke(state["messages"])
+
+    response.content = (
+        remove_think_tokens(response.content) if REMOVE_TOKENS else response.content
+    ).strip()
+
     return {"messages": [response]}
 
 
@@ -51,16 +66,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# ---- CORS-Middleware einrichten ----
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # oder ["*"] um alles zu erlauben
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# -------------------------------------
 
 
 class CheckpointResponse(BaseModel):

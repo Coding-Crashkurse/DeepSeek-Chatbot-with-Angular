@@ -1,0 +1,143 @@
+.page-wrapper {
+  /* Full-height background image */
+  min-height: 100vh;
+  background: url("../assets/robot.JPG") no-repeat center center fixed;
+  background-size: cover;
+
+  /* Light overlay for readability */
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: 0;
+  }
+
+  /* Ensure all children are in front of the overlay */
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  padding: 20px;
+}
+
+/* Header area */
+.header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 40px;
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  p {
+    color: #555;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+/* Chat container pinned to bottom-right */
+.chat-container {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important;
+}
+
+/* Chat bubble (button) */
+.chat-bubble {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #1a30d6;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+
+  &:hover {
+    background-color: #182bb8; /* Slightly darker on hover */
+  }
+}
+
+/* Chat window styling: Wider and taller */
+.chat-window {
+  width: 400px;
+  height: 500px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Scrollable message area */
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background-color: #fafafa;
+}
+
+/* Distinguish messages by role */
+.chat-message {
+  max-width: 80%;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+/* User messages aligned right with a different background */
+.user .chat-message {
+  background-color: #e3f2fd; /* Light blue-ish background */
+  margin-left: auto;
+  text-align: right;
+}
+
+/* Assistant messages aligned left with a neutral background */
+.assistant .chat-message {
+  background-color: #e0e0e0; /* Light gray background */
+  margin-right: auto;
+  text-align: left;
+}
+
+/* Optional: different style for system messages, if used */
+.system .chat-message {
+  background-color: #fff8e1;
+  border: 1px solid #eee;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Loading area for spinner */
+.chat-loading {
+  text-align: center;
+  padding: 5px;
+  min-height: 30px;
+}
+
+/* Input row */
+.chat-input {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  gap: 10px;
+
+  /* You can fine-tune these if using Angular Material */
+  mat-form-field {
+    flex: 1;
+  }
+}

@@ -2,11 +2,10 @@ fastapi
 uvicorn
 langgraph
 langchain-core
-langchain-openai
+langchain-ollama
 psycopg_pool
 pydantic
 SQLAlchemy
 psycopg[binary]
 psycopg-pool
 langgraph-checkpoint-postgres
-python-dotenv
