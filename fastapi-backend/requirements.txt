@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+langgraph
+langchain-core
+langchain-openai
+psycopg_pool
+pydantic
+SQLAlchemy
+psycopg[binary]
+psycopg-pool
+langgraph-checkpoint-postgres
+python-dotenv
