@@ -1,0 +1,28 @@
+<div style="position: fixed; bottom: 20px; right: 20px;">
+  <!-- Chat-Bubble -->
+  <div style="width: 60px; height: 60px; border-radius: 30px; background-color: #007bff;
+           display: flex; align-items: center; justify-content: center; color: #fff;
+           cursor: pointer;" (click)="toggleChat()">
+    Chat
+  </div>
+
+  <!-- Chat-Fenster -->
+  <div *ngIf="chatOpen"
+    style="background-color: #f7f7f7; border: 1px solid #ccc; width: 300px; height: 400px; margin-top: 10px; display: flex; flex-direction: column;">
+    <div style="flex: 1; padding: 10px; overflow-y: auto;">
+      <div *ngFor="let message of messages">
+        <strong>{{ message.role }}:</strong> {{ message.content }}
+      </div>
+    </div>
+
+    <!-- Ladeindikator -->
+    <div style="padding: 0 10px 10px;">
+      <span *ngIf="loading" style="font-style: italic; color: gray;">Warte auf Antwort...</span>
+    </div>
+
+    <div style="padding: 10px; border-top: 1px solid #ccc;">
+      <input [(ngModel)]="userInput" (keyup.enter)="sendMessage()" style="width: 80%;" placeholder="Schreib etwas..." />
+      <button (click)="sendMessage()">Senden</button>
+    </div>
+  </div>
+</div>
