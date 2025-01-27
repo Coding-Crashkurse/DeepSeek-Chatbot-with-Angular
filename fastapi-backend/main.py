@@ -1,41 +1,45 @@
 import os
 import uuid
 from contextlib import asynccontextmanager
+from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from psycopg_pool import AsyncConnectionPool
+
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import START, StateGraph, MessagesState
 from langchain_core.messages import HumanMessage
 from langchain_ollama import ChatOllama
+
 import re
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434")
-
 REMOVE_TOKENS = os.getenv("REMOVE_TOKENS", "True").lower() == "true"
 
+# Regex to remove <think>...</think>
 THINK_PATTERN = re.compile(r"<think>.*?</think>", re.DOTALL)
 
 
 def remove_think_tokens(text: str) -> str:
-    """Remove <think>...</think> tokens from the text."""
     return re.sub(THINK_PATTERN, "", text)
 
 
 model = ChatOllama(
-    model="deepseek-r1:7b", temperature=0, base_url=OLLAMA_URL, keep_alive="-1"
+    model="deepseek-r1:7b",
+    temperature=0,
+    base_url=OLLAMA_URL,
+    keep_alive=-1,
 )
 
 
 def call_model(state: MessagesState):
     response = model.invoke(state["messages"])
-
-    response.content = (
-        remove_think_tokens(response.content) if REMOVE_TOKENS else response.content
-    ).strip()
-
+    if REMOVE_TOKENS:
+        response.content = remove_think_tokens(response.content).strip()
+    else:
+        response.content = response.content.strip()
     return {"messages": [response]}
 
 
@@ -66,6 +70,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# CORS
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -76,6 +81,7 @@ app.add_middleware(
 )
 
 
+# Pydantic models for request/response
 class CheckpointResponse(BaseModel):
     thread_id: str
 

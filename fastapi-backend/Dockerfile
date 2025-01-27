@@ -12,10 +12,6 @@ WORKDIR /app
 
 COPY requirements.txt ./
 
-COPY .env ./
-
-# Hier entweder normal "psycopg" (was C-Extensions baut) ...
-# oder direkt das "binary"-Paket "psycopg[binary]" in der requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .

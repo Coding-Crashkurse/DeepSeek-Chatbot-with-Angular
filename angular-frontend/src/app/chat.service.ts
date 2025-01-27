@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-  private baseURL = 'http://localhost:8000';
+  private baseURL = '/api';
 
   constructor(private http: HttpClient) {}
 
