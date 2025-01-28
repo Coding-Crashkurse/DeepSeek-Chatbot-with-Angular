@@ -15,15 +15,6 @@ services:
       - ./nginx/www:/usr/share/nginx/html:rw
     restart: unless-stopped
 
-  certbot:
-    image: certbot/certbot:latest
-    container_name: certbot
-    volumes:
-      - ./nginx/certs:/etc/letsencrypt
-      - ./nginx/www:/usr/share/nginx/html
-    # No entrypoint or command; used only via: docker compose run --rm certbot ...
-    restart: unless-stopped
-
   ollama:
     image: ollama/ollama:latest
     container_name: ollama_server
